@@ -1,0 +1,81 @@
+<% layout("./layouts/boilerplate.ejs") %>
+<form
+  action="/listings/<%=data._id%>?_method=PATCH"
+  method="POST"
+  class="needs-validation"
+  novalidate
+  enctype="multipart/form-data"
+>
+  <div class="row">
+    <h3 class="col-8 offset-md-2">Add a New Listing</h3>
+    <div class="col-8 offset-md-2">
+      <label for="title" class="form-label mt-1">Title:- </label>
+      <input
+        type="text"
+        id="title"
+        class="form-control mb-3"
+        name="listing[title]"
+        value="<%=data.title%>"
+        required
+      />
+      <label for="description" class="form-label">Description:- </label>
+      <input
+        type="text"
+        name="listing[description]"
+        id="description"
+        value="<%=data.description%>"
+        class="form-control mb-3"
+        required
+      />
+
+      <div>
+        <label for="image" class="form-label">Original Image:-</label>
+        <br>
+        <img src="<%=originalImage%> " class="mb-3" alt="original_image" />
+      </div>
+
+      <label for="image" class="form-label">Upload new Image:-</label>
+      <input
+        type="file"
+        name="listing[image][url]"
+        id="image"
+        class="form-control mb-3"
+      />
+
+      <div class="row">
+        <div class="col-4">
+          <label for="price" class="form-label">Price:- </label>
+          <input
+            type="text"
+            id="price"
+            class="form-control mb-3"
+            name="listing[price]"
+            value="<%=data.price%>"
+            required
+          />
+        </div>
+        <div class="col-8">
+          <label for="country">Country:- </label>
+          <input
+            type="text"
+            id="country"
+            name="listing[country]"
+            class="form-control mb-3"
+            value="<%=data.country%>"
+            required
+          />
+        </div>
+      </div>
+      <label for="location" class="form-label">Location:- </label>
+      <input
+        type="text"
+        id="location"
+        name="listing[location]"
+        class="form-control mb-3"
+        value="<%=data.location%>"
+        required
+      />
+      <button class="btn btn-add btn-dark">Update Listing</button>
+    </div>
+  </div>
+</form>

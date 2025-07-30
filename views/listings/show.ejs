@@ -1,0 +1,159 @@
+<%layout("./layouts/boilerplate")%>
+
+<body>
+  <div class="container row">
+    <div class="col-lg-6 offset-lg-2 col-md-8 offset-md-1">
+      <h3><%=data.title%></h3>
+      <img
+        src="<%=data.image.url%>"
+        class="card-image show-img m-3"
+        alt="listing_image"
+      />
+      <div class="card-body">
+        <ul>
+          <li>Owned by:- <i> <%=data.owner.username%> </i></li>
+          <li><%=data.description%></li>
+          <li>&#8377; <%=data.price.toLocaleString()%>/night</li>
+          <li><%=data.location%></li>
+          <li><%=data.country%></li>
+        </ul>
+      </div>
+      <%if(user && data.owner.username === user.username){%>
+      <div class="row mt-3">
+        <div class="col-4">
+          <form
+            action="/listings/<%=data._id%>/edit"
+            method="get"
+          >
+            <button class="btn btn-success custom-btn">Edit Listing</button>
+          </form>
+        </div>
+        <div class="col-5">
+          <form
+            action="/listings/<%=data._id%>?_method=DELETE"
+            method="post"
+          >
+            <button class="btn btn-dark">Delete Listing</button>
+          </form>
+        </div>
+      </div>
+      <%}%>
+    </div>
+  </div>
+  <div class="container col-lg-7 offset-lg-2 col-md-8 offset-md-1 mt-4 mb-3">
+    <hr />
+    <h4>Leave A Review</h4>
+    <form
+      action="/listings/<%=data._id%>/reviews"
+      method="POST"
+      class="needs-validation"
+      novalidate
+    >
+      <div class="rating mt-3">
+        <input type="text" id="rating-value" style="display: none"
+        name="review[rating]" <%=user?"required":""%> value="<%=userRating%>"/>
+        <div class="rating-star">
+          <label for="rating" class="form-label">Rating :- </label>
+          <i class="fa-solid fa-star star" id="1"></i>
+          <i class="fa-solid fa-star star" id="2"></i>
+          <i class="fa-solid fa-star star" id="3"></i>
+          <i class="fa-solid fa-star star" id="4"></i>
+          <i class="fa-solid fa-star star" id="5"></i>
+        </div>
+        <div class="invalid-feedback">Please give your rating.</div>
+      </div>
+      <div class="comment mt-3">
+        <label for="comment" class="form-label">Review :- </label>
+        <textarea
+          name="review[comment]"
+          id="comment"
+          rows="6"
+          class="form-control"
+          required
+        >
+ <%=userComment%></textarea
+        >
+        <div class="invalid-feedback">Please share your experience.</div>
+        <div class="valid-feedback">Thanks for your valuable feedback.</div>
+      </div>
+      <% if(user){%>
+      <button class="btn btn-warning mt-3"><i>Submit Review</i></button>
+      <%}else{%>
+      <button class="btn btn-warning mt-3">
+        <i>Log in to write a review !</i>
+      </button>
+      <%}%>
+    </form>
+
+    <hr />
+    <div class="average-rating mb-5">
+      <h4>Average Rating</h4>
+      <div class="average-value mb-3 mt-3">
+        <div class="average-star" data-average-rating="<%=averageRating%>">
+          <%for(let i=0;i<5;i++){%>
+          <i class="fa-solid fa-star-half"></i>
+          <i class="fa-solid fa-star-half fa-flip-horizontal"></i>
+          <%}%>
+        </div>
+        &nbsp;&nbsp;
+        <h4>
+          <%= averageRating || 0 %><sub
+            ><i>&nbsp;&nbsp;(<%=actualRating[5]%>)</i></sub
+          >
+        </h4>
+      </div>
+      <div class="rating-stats">
+        <%for(let i=4;i>=0;i--){%>
+        <div class="star-stats">
+          <div class="rating-val">
+            <b><i><%=i+1%> star</i></b>
+          </div>
+          <div class="bar">
+            <div class="bar-filled" data-width="<%= ratioRating[i] %>"></div>
+          </div>
+          (&nbsp;<%= actualRating[i]%>&nbsp;)
+        </div>
+        <%}%>
+      </div>
+    </div>
+    <%if(data.reviews.length>0){%>
+
+    <h4>All Reviews</h4>
+
+    <div class="row mb-3 mt-4">
+      <% for(review of data.reviews){%>
+      <div class="card col-5 ms-3 me-2 mb-3 review-card">
+        <div class="card-body">
+          <h5 class="card-title mt-3">
+            <i> <%=review.createdBy.username%> </i>
+          </h5>
+          <div class="rating-star mb-2 mt-3">
+            <%for(let i=0;i<5;i++){if (i< review.rating){%>
+            <i class="fa-solid fa-star static-star checked"></i>
+            <%}else{%>
+            <i class="fa-solid fa-star static-star"></i>
+            <%}}%>
+          </div>
+          <p class="card-text"><b> <%=review.comment%> </b></p>
+          <p class="card-text">
+            <%=(review.createdAt).toLocaleString("en-IN")%>
+          </p>
+        </div>
+        <form
+          method="POST"
+          action="/listings/<%=data._id%>/reviews/<%=review._id%>?_method=DELETE"
+        >
+          <button class="btn btn-sm btn-dark mt-3 mb-3">Delete</button>
+        </form>
+      </div>
+      <%}%>
+    </div>
+    <%}%>
+  </div>
+  <div class="container col-lg-7 offset-lg-2 col-md-8 offset-md-1 mt-4 mb-3">
+    <h3>Where you'll be</h3>
+    <div id="map"></div>
+  </div>
+</body>
+
+<script src="/maps.js" defer></script>
